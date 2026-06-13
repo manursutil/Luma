@@ -1,6 +1,6 @@
 //
-//  LumaViewModel.swift
-//  Luma
+//  JameoViewModel.swift
+//  Jameo
 //
 //  Created by Manuel Rodríguez Sutil on 13/06/2026.
 //
@@ -9,7 +9,7 @@ import Combine
 import Foundation
 
 @MainActor
-final class LumaViewModel: ObservableObject {
+final class JameoViewModel: ObservableObject {
     @Published var prompt: String = ""
     @Published var answer: String = ""
     @Published var isLoading: Bool = false
@@ -29,7 +29,7 @@ final class LumaViewModel: ObservableObject {
         isLoading = false
     }
 
-    func askLuma() {
+    func askJameo() {
         let submittedPrompt = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !submittedPrompt.isEmpty, !isLoading else { return }
 

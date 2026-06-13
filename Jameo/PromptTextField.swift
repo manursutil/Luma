@@ -1,6 +1,6 @@
 //
 //  PromptTextField.swift
-//  Luma
+//  Jameo
 //
 //  Created by Manuel Rodríguez Sutil on 13/06/2026.
 //

@@ -12,12 +12,12 @@ final class SpotlightPanelController: NSObject, NSWindowDelegate {
         static let cornerRadius: CGFloat = 20
     }
 
-    private let viewModel: LumaViewModel
+    private let viewModel: JameoViewModel
     private var panel: SpotlightPanel?
     private var escapeMonitor: Any?
     private var cancellables: Set<AnyCancellable> = []
 
-    init(viewModel: LumaViewModel) {
+    init(viewModel: JameoViewModel) {
         self.viewModel = viewModel
         super.init()
         observeContentChanges()

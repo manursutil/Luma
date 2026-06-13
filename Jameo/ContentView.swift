@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  Luma
+//  Jameo
 //
 //  Created by Manuel Rodríguez Sutil on 13/06/2026.
 //
@@ -8,22 +8,22 @@
 import SwiftUI
 
 struct ContentView: View {
-    @ObservedObject var viewModel: LumaViewModel
+    @ObservedObject var viewModel: JameoViewModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 PromptTextField(
                     text: $viewModel.prompt,
-                    placeholder: "Ask Luma...",
+                    placeholder: "Ask Jameo...",
                     focusRequest: viewModel.focusRequest
                 ) {
-                    viewModel.askLuma()
+                    viewModel.askJameo()
                 }
                 .frame(height: 30)
 
                 Button {
-                    viewModel.askLuma()
+                    viewModel.askJameo()
                 } label: {
                     Image(systemName: "arrow.up")
                         .font(.system(size: 15, weight: .semibold))
@@ -65,5 +65,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView(viewModel: LumaViewModel())
+    ContentView(viewModel: JameoViewModel())
 }

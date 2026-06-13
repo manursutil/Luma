@@ -3,7 +3,7 @@ import Carbon
 import SwiftUI
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    private let viewModel = LumaViewModel()
+    private let viewModel = JameoViewModel()
     private lazy var panelController = SpotlightPanelController(viewModel: viewModel)
     private var hotKeyManager: HotKeyManager?
     private var statusItem: NSStatusItem?
@@ -18,7 +18,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         hotKeyManager = nil
     }
 
-    @objc private func openLuma() {
+    @objc private func openJameo() {
         panelController.show()
     }
 
@@ -27,7 +27,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
     }
 
-    @objc private func quitLuma() {
+    @objc private func quitJameo() {
         NSApp.terminate(nil)
     }
 
@@ -35,15 +35,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         statusItem.button?.image = NSImage(
             systemSymbolName: "sparkle.magnifyingglass",
-            accessibilityDescription: "Luma"
+            accessibilityDescription: "Jameo"
         )
         statusItem.button?.imagePosition = .imageOnly
 
         let menu = NSMenu()
-        menu.addItem(NSMenuItem(title: "Open Luma", action: #selector(openLuma), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "Open Jameo", action: #selector(openJameo), keyEquivalent: ""))
         menu.addItem(NSMenuItem(title: "Settings...", action: #selector(openSettings), keyEquivalent: ","))
         menu.addItem(.separator())
-        menu.addItem(NSMenuItem(title: "Quit Luma", action: #selector(quitLuma), keyEquivalent: "q"))
+        menu.addItem(NSMenuItem(title: "Quit Jameo", action: #selector(quitJameo), keyEquivalent: "q"))
 
         for item in menu.items {
             item.target = self

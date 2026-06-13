@@ -28,7 +28,7 @@ final class HotKeyManager {
             return nil
         }
 
-        let hotKeyID = EventHotKeyID(signature: fourCharCode("LUMA"), id: 1)
+        let hotKeyID = EventHotKeyID(signature: fourCharCode("JAME"), id: 1)
         let registrationStatus = RegisterEventHotKey(
             keyCode,
             UInt32(modifiers),

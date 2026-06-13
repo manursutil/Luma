@@ -1,10 +1,10 @@
-# Luma Context
+# Jameo Context
 
 ## Product Direction
 
-Luma is a native macOS utility for asking a local Ollama model quick one-shot questions from anywhere in the system.
+Jameo is a native macOS utility for asking a local Ollama model quick one-shot questions from anywhere in the system.
 
-The intended user experience is closer to macOS Spotlight than a conventional windowed app. Luma should live quietly in the background, be available globally through a keyboard shortcut, and avoid requiring the user to manage a normal app window.
+The intended user experience is closer to macOS Spotlight than a conventional windowed app. Jameo should live quietly in the background, be available globally through a keyboard shortcut, and avoid requiring the user to manage a normal app window.
 
 ## Current App Shape
 
@@ -19,9 +19,9 @@ The first priority is turning the existing core functionality into a Spotlight-l
 
 Decisions:
 
-- Luma should be a menu-bar/background app, not a conventional Dock-window app.
+- Jameo should be a menu-bar/background app, not a conventional Dock-window app.
 - It should expose a menu bar icon.
-- The menu bar icon should open a compact Ollama-style menu with `Open Luma`, `Settings...`, a separator, and `Quit Luma`.
+- The menu bar icon should open a compact Ollama-style menu with `Open Jameo`, `Settings...`, a separator, and `Quit Jameo`.
 - Pressing `Cmd+Shift+Space` should show a floating Spotlight-style bar/panel.
 - Pressing `Cmd+Shift+Space` again while the panel is visible should toggle it closed.
 - The implementation should use built-in macOS/AppKit APIs where practical.
@@ -48,7 +48,7 @@ Likely settings:
 
 ## Future Context Awareness
 
-A future direction is for Luma to take context from the current screen. This is not part of the first milestone.
+A future direction is for Jameo to take context from the current screen. This is not part of the first milestone.
 
 This likely needs separate design work because it may affect:
 
