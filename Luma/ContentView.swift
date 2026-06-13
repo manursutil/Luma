@@ -5,26 +5,61 @@
 //  Created by Manuel Rodríguez Sutil on 13/06/2026.
 //
 
+import Combine
 import SwiftUI
 
+@MainActor
+final class LumaViewModel: ObservableObject {
+    @Published var prompt: String = ""
+    @Published var answer: String = ""
+    @Published var isLoading: Bool = false
+    @Published var focusRequest = UUID()
+
+    func requestFocus() {
+        focusRequest = UUID()
+    }
+
+    func askLuma() {
+        let submittedPrompt = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !submittedPrompt.isEmpty, !isLoading else { return }
+
+        Task {
+            isLoading = true
+            answer = ""
+
+            do {
+                let stream = OllamaService.shared.generateStream(prompt: submittedPrompt)
+
+                for try await chunk in stream {
+                    answer += chunk
+                }
+            } catch {
+                answer = "Error \(error)"
+            }
+
+            isLoading = false
+        }
+    }
+}
+
 struct ContentView: View {
-    @State private var prompt: String = ""
-    @State private var answer: String = ""
-    @State private var isLoading: Bool = false
-    
+    @ObservedObject var viewModel: LumaViewModel
+    @FocusState private var promptIsFocused: Bool
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                TextField("Ask Luma...", text: $prompt)
+                TextField("Ask Luma...", text: $viewModel.prompt)
                     .textFieldStyle(.plain)
                     .font(.title3)
                     .submitLabel(.send)
+                    .focused($promptIsFocused)
                     .onSubmit {
-                        askLuma()
+                        viewModel.askLuma()
                     }
 
                 Button {
-                    askLuma()
+                    viewModel.askLuma()
                 } label: {
                     Image(systemName: "arrow.up")
                         .font(.system(size: 17, weight: .semibold))
@@ -35,46 +70,42 @@ struct ContentView: View {
                 .buttonBorderShape(.circle)
                 .tint(.black)
                 .keyboardShortcut(.defaultAction)
-                .disabled(isLoading || prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .disabled(viewModel.isLoading || viewModel.prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
 
-            if isLoading {
+            if viewModel.isLoading {
                 ProgressView()
             }
 
-            if !answer.isEmpty {
+            if !viewModel.answer.isEmpty {
                 Divider()
-                Text(answer)
-                    .textSelection(.enabled)
+                ScrollView {
+                    Text(renderedAnswer)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .textSelection(.enabled)
+                }
+                .frame(maxHeight: 300)
             }
         }
         .padding()
-        .frame(width: 700)
-    }
-    
-    private func askLuma() {
-        let submittedPrompt = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !submittedPrompt.isEmpty, !isLoading else { return }
-
-        Task {
-            isLoading = true
-            answer = ""
-            
-            do {
-                let stream = OllamaService.shared.generateStream(prompt: submittedPrompt)
-
-                for try await chunk in stream {
-                    answer += chunk
-                }
-            } catch {
-                answer = "Error \(error)"
-            }
-            
-            isLoading = false
+        .frame(width: 700, alignment: .topLeading)
+        .onAppear {
+            promptIsFocused = true
         }
+        .onChange(of: viewModel.focusRequest) {
+            promptIsFocused = false
+            Task { @MainActor in
+                promptIsFocused = true
+            }
+        }
+    }
+
+    private var renderedAnswer: AttributedString {
+        let options = AttributedString.MarkdownParsingOptions(interpretedSyntax: .full)
+        return (try? AttributedString(markdown: viewModel.answer, options: options)) ?? AttributedString(viewModel.answer)
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView(viewModel: LumaViewModel())
 }
