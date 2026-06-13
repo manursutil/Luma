@@ -107,7 +107,7 @@ struct ContentView: View {
     }
 
     private var renderedAnswer: AttributedString {
-        let options = AttributedString.MarkdownParsingOptions(interpretedSyntax: .full)
+        let options = AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
         return (try? AttributedString(markdown: viewModel.answer, options: options)) ?? AttributedString(viewModel.answer)
     }
 }
