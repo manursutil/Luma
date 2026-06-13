@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		64AE7B1D2FDD79360073D1EA /* Ollama in Frameworks */ = {isa = PBXBuildFile; productRef = 64AE7B1C2FDD79360073D1EA /* Ollama */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		64AE7B0A2FDD77050073D1EA /* Luma.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Luma.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				64AE7B1D2FDD79360073D1EA /* Ollama in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = Luma;
 			packageProductDependencies = (
+				64AE7B1C2FDD79360073D1EA /* Ollama */,
 			);
 			productName = Luma;
 			productReference = 64AE7B0A2FDD77050073D1EA /* Luma.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = 64AE7B012FDD77050073D1EA;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				64AE7B1B2FDD79360073D1EA /* XCRemoteSwiftPackageReference "ollama-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 64AE7B0B2FDD77050073D1EA /* Products */;
 			projectDirPath = "";
@@ -252,7 +261,17 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_APP_SANDBOX = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -282,7 +301,17 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_APP_SANDBOX = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -325,6 +354,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		64AE7B1B2FDD79360073D1EA /* XCRemoteSwiftPackageReference "ollama-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mattt/ollama-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.8.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		64AE7B1C2FDD79360073D1EA /* Ollama */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 64AE7B1B2FDD79360073D1EA /* XCRemoteSwiftPackageReference "ollama-swift" */;
+			productName = Ollama;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 64AE7B022FDD77050073D1EA /* Project object */;
 }
