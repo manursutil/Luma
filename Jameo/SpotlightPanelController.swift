@@ -35,7 +35,10 @@ final class SpotlightPanelController: NSObject, NSWindowDelegate {
         let panel = panel ?? makePanel()
         self.panel = panel
 
-        viewModel.reset()
+        if !JameoSettings.preservePanelState {
+            viewModel.reset()
+        }
+
         position(panel)
         installEscapeMonitor()
         NSApp.activate(ignoringOtherApps: true)

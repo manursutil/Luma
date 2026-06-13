@@ -46,7 +46,7 @@ final class JameoViewModel: ObservableObject {
                 }
             } catch {
                 guard !Task.isCancelled else { return }
-                answer = "Error \(error)"
+                answer = "Error: \(error)"
             }
 
             isLoading = false

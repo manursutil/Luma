@@ -16,9 +16,8 @@ class OllamaService {
         userAgent: "Jameo/1.0"
     )
     
-    private let model = Model.ID(rawValue: "qwen3.5:9b")!
     private let systemPrompt = """
-    You are a concise assistant. Answer directly in 1-3 short paragraphs unless the user asks for detail. Avoid long explanations, preambles, summaries, and repeated caveats. Prefer bullets only when they make the answer shorter. If code is needed, provide the minimal working snippet.
+    Eres un asistente conciso. Responde siempre en español, de forma directa, en 1-3 párrafos cortos salvo que el usuario pida más detalle. Evita explicaciones largas, preámbulos, resúmenes y advertencias repetidas. Usa listas solo cuando hagan la respuesta más breve. Si hace falta código, proporciona el fragmento mínimo funcional.
     """
     
     private init() {}
@@ -28,7 +27,7 @@ class OllamaService {
             Task {
                 do {
                     let stream = try client.chatStream(
-                        model: model,
+                        model: selectedModel,
                         messages: [
                             .system(systemPrompt),
                             .user(prompt),
@@ -37,7 +36,7 @@ class OllamaService {
                             "temperature": 0.7,
                             "num_predict": 1024,
                         ],
-                        think: false,
+                        think: JameoSettings.reasoningEnabled,
                         keepAlive: .minutes(10)
                     )
 
@@ -51,5 +50,9 @@ class OllamaService {
                 }
             }
         }
+    }
+
+    private var selectedModel: Model.ID {
+        Model.ID(rawValue: JameoSettings.model) ?? Model.ID(rawValue: JameoSettings.defaultModel)!
     }
 }

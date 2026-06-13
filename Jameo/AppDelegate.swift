@@ -7,6 +7,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var panelController = SpotlightPanelController(viewModel: viewModel)
     private var hotKeyManager: HotKeyManager?
     private var statusItem: NSStatusItem?
+    private var settingsWindow: NSWindow?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -23,8 +24,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func openSettings() {
+        let window = settingsWindow ?? makeSettingsWindow()
+        settingsWindow = window
+
         NSApp.activate(ignoringOtherApps: true)
-        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+        window.makeKeyAndOrderFront(nil)
     }
 
     @objc private func quitJameo() {
@@ -40,10 +44,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem.button?.imagePosition = .imageOnly
 
         let menu = NSMenu()
-        menu.addItem(NSMenuItem(title: "Open Jameo", action: #selector(openJameo), keyEquivalent: ""))
-        menu.addItem(NSMenuItem(title: "Settings...", action: #selector(openSettings), keyEquivalent: ","))
+        menu.addItem(NSMenuItem(title: "Abrir Jameo", action: #selector(openJameo), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "Ajustes...", action: #selector(openSettings), keyEquivalent: ","))
         menu.addItem(.separator())
-        menu.addItem(NSMenuItem(title: "Quit Jameo", action: #selector(quitJameo), keyEquivalent: "q"))
+        menu.addItem(NSMenuItem(title: "Salir de Jameo", action: #selector(quitJameo), keyEquivalent: "q"))
 
         for item in menu.items {
             item.target = self
@@ -57,5 +61,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         hotKeyManager = HotKeyManager(keyCode: UInt32(kVK_Space), modifiers: cmdKey | shiftKey) { [weak self] in
             self?.panelController.toggle()
         }
+    }
+
+    private func makeSettingsWindow() -> NSWindow {
+        let hostingView = NSHostingView(rootView: SettingsView())
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 440, height: 260),
+            styleMask: [.titled, .closable],
+            backing: .buffered,
+            defer: false
+        )
+
+        window.title = "Ajustes"
+        window.contentView = hostingView
+        window.isReleasedWhenClosed = false
+        window.center()
+
+        return window
     }
 }

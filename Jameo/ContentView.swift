@@ -15,7 +15,7 @@ struct ContentView: View {
             HStack {
                 PromptTextField(
                     text: $viewModel.prompt,
-                    placeholder: "Ask Jameo...",
+                    placeholder: "Pregunta a Jameo...",
                     focusRequest: viewModel.focusRequest
                 ) {
                     viewModel.askJameo()
@@ -38,7 +38,7 @@ struct ContentView: View {
             }
 
             if viewModel.isLoading {
-                Text("Thinking...")
+                Text("Pensando...")
                     .font(.callout)
                     .foregroundStyle(.secondary)
             }
