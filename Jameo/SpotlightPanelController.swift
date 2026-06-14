@@ -7,8 +7,8 @@ final class SpotlightPanelController: NSObject, NSWindowDelegate {
     private enum Layout {
         static let width: CGFloat = 620
         static let collapsedHeight: CGFloat = 64
-        static let expandedHeight: CGFloat = 360
         static let topOffset: CGFloat = 96
+        static let bottomOffset: CGFloat = 48
         static let cornerRadius: CGFloat = 32
     }
 
@@ -55,6 +55,7 @@ final class SpotlightPanelController: NSObject, NSWindowDelegate {
         installEscapeMonitor()
         NSApp.activate(ignoringOtherApps: true)
         panel.makeKeyAndOrderFront(nil)
+        schedulePanelResize()
         viewModel.requestFocus()
     }
 
@@ -97,11 +98,10 @@ final class SpotlightPanelController: NSObject, NSWindowDelegate {
     }
 
     private func observeContentChanges() {
-        viewModel.$answer
-            .combineLatest(viewModel.$isLoading)
+        Publishers.CombineLatest3(viewModel.$answer, viewModel.$isLoading, viewModel.$didSubmitWithScreenContext)
             .receive(on: RunLoop.main)
-            .sink { [weak self] _, _ in
-                self?.resizePanelForCurrentContent()
+            .sink { [weak self] _, _, _ in
+                self?.schedulePanelResize()
             }
             .store(in: &cancellables)
     }
@@ -126,10 +126,22 @@ final class SpotlightPanelController: NSObject, NSWindowDelegate {
         self.escapeMonitor = nil
     }
 
+    private func schedulePanelResize() {
+        DispatchQueue.main.async { [weak self] in
+            self?.resizePanelForCurrentContent()
+        }
+    }
+
     private func resizePanelForCurrentContent() {
         guard let panel else { return }
 
-        let targetHeight = viewModel.answer.isEmpty && !viewModel.isLoading ? Layout.collapsedHeight : Layout.expandedHeight
+        panel.contentView?.layoutSubtreeIfNeeded()
+
+        let measuredHeight = panel.contentView?.fittingSize.height ?? Layout.collapsedHeight
+        let targetHeight = min(
+            max(measuredHeight, Layout.collapsedHeight),
+            maximumPanelHeight(for: panel)
+        )
         var frame = panel.frame
         guard abs(frame.height - targetHeight) > 0.5 else { return }
 
@@ -137,6 +149,19 @@ final class SpotlightPanelController: NSObject, NSWindowDelegate {
         frame.size.height = targetHeight
         frame.origin.y -= heightDelta
         panel.setFrame(frame, display: true, animate: true)
+    }
+
+    private func maximumPanelHeight(for panel: NSPanel) -> CGFloat {
+        let visibleFrame = (panel.screen ?? NSScreen.main ?? NSScreen.screens.first)?.visibleFrame
+
+        guard let visibleFrame else {
+            return CGFloat.greatestFiniteMagnitude
+        }
+
+        return max(
+            Layout.collapsedHeight,
+            visibleFrame.height - Layout.topOffset - Layout.bottomOffset
+        )
     }
 
     private func position(_ panel: NSPanel) {

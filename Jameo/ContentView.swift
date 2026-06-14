@@ -83,15 +83,14 @@ struct ContentView: View {
                 ScrollView {
                     Text(renderedAnswer)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .fixedSize(horizontal: false, vertical: true)
                         .textSelection(.enabled)
                 }
-                .frame(maxHeight: 300)
             }
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
         .frame(width: 620, alignment: .topLeading)
-        .frame(maxHeight: .infinity, alignment: .topLeading)
     }
 
     private var renderedAnswer: AttributedString {
