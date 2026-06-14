@@ -1,31 +1,52 @@
-# Jameo
+<p align="center">
+  <img src="docs/images/jameo-logo.png" alt="Jameo logo" width="180">
+</p>
 
-Jameo is a small native macOS utility for asking quick questions to a local
-Ollama model.
+<h1 align="center">Jameo</h1>
 
-It behaves like a lightweight Spotlight-style assistant: it lives in the menu
-bar, opens with a global keyboard shortcut, and streams concise one-shot answers
-from Ollama. When the selected Ollama model supports vision, Jameo can also
-include the current screen with a question.
+<p align="center">
+  <strong>A small native macOS assistant for quick questions to local Ollama models.</strong>
+</p>
 
-## What It Does
+<p align="center">
+  Fast · Native · Local-first · Screen-aware · Liquid Glass-inspired
+</p>
 
-- Opens a floating prompt panel from anywhere on macOS.
-- Sends one-shot questions to a local Ollama model and streams the answer back.
-- Uses a concise system prompt that answers in the user's language by default.
-- Optionally includes the current screen with the next submitted question.
-- Supports screen-only questions when screen context is enabled and the prompt is empty.
-- Checks whether the selected model supports vision before enabling screen context.
-- Keeps captured screen images in memory only; they are not written to disk,
-  logs, or history.
-- Provides English and Spanish UI strings based on the system language.
-- Lets you choose a local Ollama model, toggle reasoning mode, and decide whether
-  the panel should preserve the last prompt and answer between opens.
+<p align="center">
+  <a href="#install">Install</a> ·
+  <a href="#features">Features</a> ·
+  <a href="#build">Build</a> ·
+  <a href="#contribute">Contribute</a>
+</p>
 
-## Requirements
+<p align="center">
+  <img src="docs/images/screenshot-panel.png" alt="Jameo prompt panel screenshot placeholder" width="49%">
+  <img src="docs/images/screenshot-settings.png" alt="Jameo settings screenshot placeholder" width="49%">
+</p>
+
+<p align="center">
+  <img src="docs/images/screenshot-screen-context.png" alt="Jameo screen context screenshot placeholder" width="60%">
+</p>
+
+## Features
+
+- **Spotlight-style prompt panel** - open Jameo from anywhere on macOS.
+- **Local Ollama answers** - stream concise one-shot responses from a local model.
+- **Explicit screen context** - include the current screen only when you choose.
+- **Vision-model awareness** - screen context is enabled only for models that report vision support.
+- **Private by design** - captured screen images stay in memory for the request only.
+- **Menu bar utility** - Jameo runs as a lightweight accessory app.
+- **Simple settings** - choose a model, toggle reasoning, and preserve panel state.
+- **Localized UI** - English and Spanish strings are included.
+
+## Install
+
+Jameo is currently built from source.
+
+Requirements:
 
 - macOS with Xcode installed.
-- Ollama running locally.
+- [Ollama](https://ollama.com/) running locally.
 - At least one downloaded Ollama model.
 - Ollama available at `http://127.0.0.1:11434`.
 - A vision-capable Ollama model if you want screen-context questions.
@@ -37,9 +58,15 @@ The default model is:
 qwen3.5:9b
 ```
 
+Pull it with:
+
+```sh
+ollama pull qwen3.5:9b
+```
+
 You can select another downloaded model in Jameo's settings.
 
-## Getting Started
+## Build
 
 1. Install Ollama from [ollama.com](https://ollama.com/).
 2. Start Ollama.
@@ -52,16 +79,16 @@ You can select another downloaded model in Jameo's settings.
 4. Optional: pull a vision-capable model for screen context.
 5. Open `Jameo.xcodeproj` in Xcode.
 6. Build and run the `Jameo` scheme.
-7. Press `Cmd + Shift + Space` to open or close the Jameo panel.
+7. Press `Cmd+Shift+Space` to open or close the Jameo panel.
 
 Jameo runs as a menu-bar accessory app, so it does not appear as a normal Dock
 window.
 
 ## Using Jameo
 
-Open the panel with `Cmd + Shift + Space`, type a question, and press Return or
-the submit button. Jameo sends the question to the selected Ollama model and
-streams the response into the panel.
+Open the panel with `Cmd+Shift+Space`, type a question, and press Return or the
+submit button. Jameo sends the question to the selected Ollama model and streams
+the response into the panel.
 
 The panel is intentionally one-shot. It does not maintain a multi-message chat
 history, and preserved prompt or answer text is display state only.
@@ -123,22 +150,17 @@ Jameo/
   SettingsView.swift                Model, reasoning, and panel settings.
   Localizable.xcstrings             English and Spanish UI strings.
 
+docs/images/
+  jameo-logo.png                    README logo.
+  screenshot-panel.png              Placeholder for the main prompt screenshot.
+  screenshot-settings.png           Placeholder for the settings screenshot.
+  screenshot-screen-context.png     Placeholder for a screen-context screenshot.
+
 docs/adr/
   0001-explicit-screen-context.md   Screen-context product decision.
 
 CONTEXT.md                          Product language and design direction.
 ```
-
-## Development Notes
-
-- Keep Jameo a small native macOS utility rather than a conventional chat app.
-- Prefer built-in AppKit, SwiftUI, and macOS APIs before adding dependencies.
-- Treat screen content as privacy-sensitive. Screen context should stay explicit,
-  per-question, and in-memory.
-- Do not add OCR or silent text-only fallback for screen-context requests unless
-  the product decision changes.
-- Keep the assistant interaction one-shot unless a future design explicitly adds
-  conversation history.
 
 ## Troubleshooting
 
@@ -173,6 +195,17 @@ model list.
 Grant Screen Recording permission to Jameo in macOS System Settings, then retry
 the question. Depending on macOS behavior, you may need to restart the app after
 granting permission.
+
+## Contribute
+
+- Keep Jameo a small native macOS utility rather than a conventional chat app.
+- Prefer built-in AppKit, SwiftUI, and macOS APIs before adding dependencies.
+- Treat screen content as privacy-sensitive. Screen context should stay explicit,
+  per-question, and in-memory.
+- Do not add OCR or silent text-only fallback for screen-context requests unless
+  the product decision changes.
+- Keep the assistant interaction one-shot unless a future design explicitly adds
+  conversation history.
 
 ## Roadmap
 

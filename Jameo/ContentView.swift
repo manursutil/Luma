@@ -27,7 +27,7 @@ struct ContentView: View {
                 .glassEffect(.regular, in: Circle())
                 .shadow(color: screenContextButtonShadow, radius: 6, y: 2)
                 .help(screenContextHelp)
-                .disabled(viewModel.isLoading || viewModel.isCheckingScreenContextAvailability || !viewModel.screenContextAvailable)
+                .disabled(!viewModel.canToggleScreenContext)
 
                 PromptTextField(
                     text: $viewModel.prompt,
@@ -52,7 +52,7 @@ struct ContentView: View {
                 .glassEffect(.regular, in: Circle())
                 .shadow(color: submitButtonShadow, radius: 7, y: 2)
                 .keyboardShortcut(.defaultAction)
-                .disabled(isSubmitDisabled)
+                .disabled(!viewModel.canSubmit)
             }
 
             if viewModel.didSubmitWithScreenContext {
@@ -100,7 +100,7 @@ struct ContentView: View {
     }
 
     private var isSubmitDisabled: Bool {
-        viewModel.isLoading || (viewModel.prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !viewModel.screenContextEnabled)
+        !viewModel.canSubmit
     }
 
     private var screenContextButtonForeground: Color {

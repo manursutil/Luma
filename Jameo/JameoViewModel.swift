@@ -22,10 +22,26 @@ final class JameoViewModel: ObservableObject {
     private var generationTask: Task<Void, Never>?
     private var availabilityTask: Task<Void, Never>?
     private var cancellables: Set<AnyCancellable> = []
+    private let submitterOverride: OneShotQuestionSubmitter?
+    private lazy var submitter: OneShotQuestionSubmitter = {
+        submitterOverride ?? OneShotQuestionSubmitter(
+            selectedModelSupportsVision: {
+                try await OllamaService.shared.selectedModelSupportsVision()
+            },
+            captureScreenImage: { [weak self] in
+                try await self?.screenContextImageProvider?()
+            },
+            generateStream: { prompt, images in
+                OllamaService.shared.generateStream(prompt: prompt, images: images)
+            }
+        )
+    }()
 
     var screenContextImageProvider: (() async throws -> Data?)?
 
-    init() {
+    init(submitter: OneShotQuestionSubmitter? = nil) {
+        self.submitterOverride = submitter
+
         NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification)
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
@@ -34,6 +50,14 @@ final class JameoViewModel: ObservableObject {
             .store(in: &cancellables)
 
         refreshScreenContextAvailability()
+    }
+
+    var canSubmit: Bool {
+        !isLoading && (!prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || screenContextEnabled)
+    }
+
+    var canToggleScreenContext: Bool {
+        !isLoading && !isCheckingScreenContextAvailability && screenContextAvailable
     }
 
     func requestFocus() {
@@ -50,59 +74,57 @@ final class JameoViewModel: ObservableObject {
     }
 
     func askJameo() {
-        let submittedPrompt = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
-        let shouldIncludeScreenContext = screenContextEnabled
-        guard !isLoading, !submittedPrompt.isEmpty || shouldIncludeScreenContext else { return }
+        guard canSubmit else { return }
 
         generationTask = Task {
             isLoading = true
             answer = ""
             didSubmitWithScreenContext = false
 
-            var screenImages: [Data]?
+            let response: OneShotQuestionResponse
 
-            if shouldIncludeScreenContext {
-                do {
-                    guard try await OllamaService.shared.selectedModelSupportsVision() else {
-                        screenContextAvailable = false
-                        screenContextEnabled = false
-                        answer = String(localized: "The selected model does not support screen context.")
-                        isLoading = false
-                        generationTask = nil
-                        return
-                    }
-
-                    guard let screenImage = try await screenContextImageProvider?() else {
-                        answer = String(localized: "Could not capture the current screen.")
-                        isLoading = false
-                        generationTask = nil
-                        return
-                    }
-
-                    screenImages = [screenImage]
-                } catch {
-                    guard !Task.isCancelled else { return }
-                    answer = error.localizedDescription
+            do {
+                guard let preparedResponse = try await submitter.submit(
+                    prompt: prompt,
+                    includeScreenContext: screenContextEnabled
+                ) else {
                     isLoading = false
                     generationTask = nil
                     return
                 }
+
+                response = preparedResponse
+            } catch OneShotQuestionSubmissionError.selectedModelDoesNotSupportScreenContext {
+                guard !Task.isCancelled else { return }
+                screenContextAvailable = false
+                screenContextEnabled = false
+                answer = OneShotQuestionSubmissionError.selectedModelDoesNotSupportScreenContext.localizedDescription
+                isLoading = false
+                generationTask = nil
+                return
+            } catch let error as LocalizedError {
+                guard !Task.isCancelled else { return }
+                answer = error.localizedDescription
+                isLoading = false
+                generationTask = nil
+                return
+            } catch {
+                guard !Task.isCancelled else { return }
+                answer = "Error: \(error)"
+                isLoading = false
+                generationTask = nil
+                return
             }
 
             do {
-                let stream = OllamaService.shared.generateStream(
-                    prompt: submittedPrompt.isEmpty ? String(localized: "Help me understand what is on my screen.") : submittedPrompt,
-                    images: screenImages
-                )
+                didSubmitWithScreenContext = response.includedScreenContext
 
-                didSubmitWithScreenContext = screenImages != nil
-
-                for try await chunk in stream {
+                for try await chunk in response.stream {
                     guard !Task.isCancelled else { return }
                     answer += chunk
                 }
 
-                if didSubmitWithScreenContext {
+                if response.includedScreenContext {
                     screenContextEnabled = false
                 }
             } catch {
