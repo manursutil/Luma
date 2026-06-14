@@ -17,18 +17,18 @@
         }
       }
     },
-    "Ask about your screen..." : {
+    "Ask Jameo about your screen..." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ask about your screen..."
+            "value" : "Ask Jameo about your screen..."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pregunta sobre tu pantalla..."
+            "value" : "Pregunta a Jameo sobre tu pantalla..."
           }
         }
       }
@@ -141,6 +141,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Incluir la pantalla actual con la próxima pregunta"
+          }
+        }
+      }
+    },
+    "Include screen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Include screen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incluir pantalla"
           }
         }
       }

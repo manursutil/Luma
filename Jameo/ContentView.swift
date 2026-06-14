@@ -12,23 +12,7 @@ struct ContentView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 8) {
-                Button {
-                    viewModel.screenContextEnabled.toggle()
-                } label: {
-                    Image(systemName: "rectangle.inset.filled")
-                        .font(.system(size: 14, weight: .medium))
-                        .frame(width: 30, height: 30)
-                }
-                .buttonStyle(.borderless)
-                .foregroundStyle(screenContextButtonForeground)
-                .background(Circle().fill(screenContextButtonFill))
-                .overlay(Circle().stroke(screenContextButtonStroke, lineWidth: 0.8))
-                .glassEffect(.regular, in: Circle())
-                .shadow(color: screenContextButtonShadow, radius: 6, y: 2)
-                .help(screenContextHelp)
-                .disabled(!viewModel.canToggleScreenContext)
-
+            HStack(spacing: 10) {
                 PromptTextField(
                     text: $viewModel.prompt,
                     placeholder: promptPlaceholder,
@@ -37,6 +21,8 @@ struct ContentView: View {
                     viewModel.askJameo()
                 }
                 .frame(height: 30)
+
+                screenContextControl
 
                 Button {
                     viewModel.askJameo()
@@ -53,6 +39,17 @@ struct ContentView: View {
                 .shadow(color: submitButtonShadow, radius: 7, y: 2)
                 .keyboardShortcut(.defaultAction)
                 .disabled(!viewModel.canSubmit)
+            }
+            .padding(.leading, 6)
+            .padding(.trailing, 6)
+            .padding(.vertical, 6)
+            .background {
+                Capsule(style: .continuous)
+                    .fill(Color.white.opacity(0.055))
+                    .overlay(
+                        Capsule(style: .continuous)
+                            .stroke(Color.white.opacity(0.12), lineWidth: 0.8)
+                    )
             }
 
             if viewModel.didSubmitWithScreenContext {
@@ -93,6 +90,23 @@ struct ContentView: View {
         .frame(width: 620, alignment: .topLeading)
     }
 
+    private var screenContextControl: some View {
+        Button {
+            viewModel.screenContextEnabled.toggle()
+        } label: {
+            Text("Include screen")
+                .font(.system(size: 15, weight: .medium))
+                .lineLimit(1)
+                .frame(minWidth: 104, minHeight: 30)
+                .contentShape(Capsule(style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(screenContextControlForeground)
+        .opacity(screenContextControlOpacity)
+        .help(screenContextHelp)
+        .disabled(!viewModel.canToggleScreenContext)
+    }
+
     private var renderedAnswer: AttributedString {
         let options = AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
         return (try? AttributedString(markdown: viewModel.answer, options: options)) ?? AttributedString(viewModel.answer)
@@ -102,20 +116,16 @@ struct ContentView: View {
         !viewModel.canSubmit
     }
 
-    private var screenContextButtonForeground: Color {
-        viewModel.screenContextEnabled ? .accentColor : .secondary
+    private var screenContextControlForeground: Color {
+        guard viewModel.canToggleScreenContext || viewModel.screenContextEnabled else {
+            return .secondary
+        }
+
+        return viewModel.screenContextEnabled ? .accentColor : .secondary
     }
 
-    private var screenContextButtonFill: Color {
-        viewModel.screenContextEnabled ? Color.accentColor.opacity(0.18) : Color.white.opacity(0.06)
-    }
-
-    private var screenContextButtonStroke: Color {
-        viewModel.screenContextEnabled ? Color.accentColor.opacity(0.32) : Color.white.opacity(0.14)
-    }
-
-    private var screenContextButtonShadow: Color {
-        viewModel.screenContextEnabled ? Color.accentColor.opacity(0.18) : .clear
+    private var screenContextControlOpacity: Double {
+        viewModel.canToggleScreenContext || viewModel.screenContextEnabled ? 1 : 0.58
     }
 
     private var submitButtonForeground: Color {
@@ -135,7 +145,7 @@ struct ContentView: View {
     }
 
     private var promptPlaceholder: String {
-        viewModel.screenContextEnabled ? String(localized: "Ask about your screen...") : String(localized: "Ask Jameo...")
+        viewModel.screenContextEnabled ? String(localized: "Ask Jameo about your screen...") : String(localized: "Ask Jameo...")
     }
 
     private var screenContextHelp: String {
